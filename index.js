@@ -20,13 +20,16 @@ axios(URL)
     const html = res.data;
     //   console.log(html);
     const $ = cheerio.load(html);
-    const title = $("h3", html).each(function () {
-      const newTitle = $(this).text();
-      const newwsURL = $(this).find("a").attr("href");
+    $(".eachStory", html).each(function () {
+      const newsTitle = $(this).find("h3").text();
+      const newsContent = $(this).text();
+      const imageUrl =  $('.eachStory .imgContainer img').attr('src');
 
       currentNews.push({
-        newTitle,
-        newwsURL,
+        newsId:Math.floor(Math.random() * 90000),
+        title: newsTitle,
+        content: newsContent,
+        imageUrl:imageUrl,
       });
     });
 

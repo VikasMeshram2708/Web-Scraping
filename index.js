@@ -62,7 +62,7 @@ app.get("/getAllNews", limiter, async (req, res) => {
   try {
     // const items = await db.listCollections().toArray();
     const items = await News.find({}).toArray();
-    console.log(items);
+    // console.log(items);
     res.json({
       items,
       success: true,

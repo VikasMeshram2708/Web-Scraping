@@ -23,13 +23,13 @@ axios(URL)
     $(".eachStory", html).each(function () {
       const newsTitle = $(this).find("h3").text();
       const newsContent = $(this).text();
-      const imageUrl =  $('.eachStory .imgContainer img').attr('src');
+      const imageUrl = $(".eachStory .imgContainer img").attr("src");
 
       currentNews.push({
-        newsId:Math.floor(Math.random() * 90000),
+        newsId: Math.floor(Math.random() * 90000),
         title: newsTitle,
         content: newsContent,
-        imageUrl:imageUrl,
+        imageUrl: imageUrl,
       });
     });
 
@@ -37,6 +37,11 @@ axios(URL)
   })
   .catch((err) => console.log(err));
 
+app.get("/", (req, res) => {
+  res.json({
+    message: "Hello,from server!",
+  });
+});
 app.get("/news", (req, res) => {
   res.json({ currentNews });
 });

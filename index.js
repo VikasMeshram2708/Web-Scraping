@@ -8,9 +8,19 @@ const axios = require("axios");
 
 const cheerio = require("cheerio");
 
+const { News, db } = require("./db");
+
+const { default: rateLimit } = require("express-rate-limit");
+
 // middlewares
 app.use(express.json());
 
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minutes
+  limit: 90, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+});
 const { URL } = process.env;
 
 const currentNews = [];
@@ -33,7 +43,7 @@ axios(URL)
       });
     });
 
-    console.log(currentNews);
+    // console.log(currentNews);
   })
   .catch((err) => console.log(err));
 
@@ -42,8 +52,22 @@ app.get("/", (req, res) => {
     message: "Hello,from server!",
   });
 });
-app.get("/news", (req, res) => {
-  res.json({ currentNews });
+
+app.post("/news", async (req, res) => {
+  const items = News.insertOne({ currentNews });
+  res.json({ message: "Successfully inserted to Db" });
+});
+
+app.get("/getAllNews", limiter, async (req, res) => {
+  try {
+    // const items = await db.listCollections().toArray();
+    const items = await News.find({}).toArray();
+    console.log(items);
+    res.json({
+      items,
+      success: true,
+    });
+  } catch (error) {}
 });
 
 const port = process.env.PORT || 5002;

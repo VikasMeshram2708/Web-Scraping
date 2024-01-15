@@ -58,6 +58,34 @@ app.post("/news", async (req, res) => {
   res.json({ message: "Successfully inserted to Db" });
 });
 
+app.post("/removePrevNews", async (req, res) => {
+  try {
+    await News.deleteMany({});
+    res.json({
+      message: "Successfully deleted the previous news data...",
+    });
+    console.log("Successfully deleted the previous news data...");
+  } catch (error) {
+    res.json({
+      message: `Error Deleting Previous News Data: ${error?.message}`,
+    });
+  }
+});
+
+async function sendRequestToDeleteApiRoute() {
+  try {
+    await News.deleteMany({});
+    console.log("Successfully deleted the previous news data...");
+  } catch (error) {
+    console.log("Successfully deleted the previous news data...");
+  }
+}
+
+// setInterval(() => {
+//   sendRequestToDeleteApiRoute();
+//   console.log("server refreshed successfully");
+// }, 1 * 60 * 1000);
+
 app.get("/getAllNews", limiter, async (req, res) => {
   try {
     // const items = await db.listCollections().toArray();
@@ -67,8 +95,28 @@ app.get("/getAllNews", limiter, async (req, res) => {
       items,
       success: true,
     });
-  } catch (error) {}
+  } catch (error) {
+    res.json({
+      message: `Error fetching news : ${error?.message}`,
+    });
+  }
 });
+
+// app.get("/getAllNews", limiter, async (req, res) => {
+//   try {
+//     // const items = await db.listCollections().toArray();
+//     const items = await News.find({}).toArray();
+//     // console.log(items);
+//     res.json({
+//       items,
+//       success: true,
+//     });
+//   } catch (error) {
+//     res.json({
+//       message: `Error fetching news : ${error?.message}`,
+//     });
+//   }
+// });
 
 const port = process.env.PORT || 5002;
 app.listen(port, () => {
